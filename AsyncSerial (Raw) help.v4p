@@ -1,6 +1,6 @@
 <!DOCTYPE PATCH  SYSTEM "http://vvvv.org/versions/vvvv45beta33.7.dtd" >
-   <PATCH nodename="C:\Users\jens\Documents\plugins\RawAsyncSerial\AsyncSerial (Raw) help.v4p">
-   <BOUNDS type="Window" left="2295" top="4350" width="4695" height="6000">
+   <PATCH nodename="C:\Users\jens\Documents\plugins\RawAsyncSerial\AsyncSerial (Raw) help.v4p" scrollx="0" scrolly="0">
+   <BOUNDS type="Window" left="0" top="510" width="4695" height="6000">
    </BOUNDS>
    <NODE nodename="IOBox (String)" componentmode="InABox" id="3" systemname="IOBox (String)">
    <BOUNDS type="Node" left="225" top="225" width="5100" height="450">
@@ -29,7 +29,35 @@
    </BOUNDS>
    <BOUNDS type="Box" left="1560" top="2625" width="0" height="0">
    </BOUNDS>
+   <PIN pinname="Enable" visible="1">
+   </PIN>
    </NODE>
    <PACK Name="addonpack" Version="33.7.0">
    </PACK>
+   <NODE systemname="IOBox (Value Advanced)" nodename="IOBox (Value Advanced)" componentmode="InABox" id="4">
+   <BOUNDS type="Node" left="2580" top="1830" width="100" height="100">
+   </BOUNDS>
+   <BOUNDS type="Box" left="2580" top="1830" width="480" height="480">
+   </BOUNDS>
+   <PIN pinname="Value Type" slicecount="1" values="Boolean">
+   </PIN>
+   <PIN pinname="Behavior" slicecount="1" values="Toggle">
+   </PIN>
+   <PIN pinname="Y Output Value" visible="1">
+   </PIN>
+   <PIN pinname="X Input Value" slicecount="1" values="0">
+   </PIN>
+   <PIN pinname="Y Input Value" slicecount="1" values="0">
+   </PIN>
+   </NODE>
+   <LINK srcnodeid="4" srcpinname="Y Output Value" dstnodeid="0" dstpinname="Enable">
+   </LINK>
+   <NODE systemname="Renderer (TTY)" nodename="Renderer (TTY)" componentmode="InAWindow" id="5">
+   <BOUNDS type="Node" left="1665" top="4185" width="100" height="100">
+   </BOUNDS>
+   <BOUNDS type="Box" left="1665" top="4185" width="2400" height="1800">
+   </BOUNDS>
+   <BOUNDS type="Window" left="210" top="6315" width="6240" height="5085">
+   </BOUNDS>
+   </NODE>
    </PATCH>

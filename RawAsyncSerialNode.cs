@@ -30,6 +30,9 @@ namespace VVVV.Nodes
 		[Output("Output")]
 		public ISpread<Stream> FStreamOut;
 
+		
+		[Import()]
+		ILogger Logger;
 		//when dealing with byte streams (what we call Raw in the GUI) it's always
 		//good to have a byte buffer around. we'll use it when copying the data.
 		readonly byte[] FBuffer = new byte[1024];
@@ -37,22 +40,13 @@ namespace VVVV.Nodes
 
 		ASerialPort Port;
 
+		Stream sBuffer = new MemoryStream();
 		
-		//called when all inputs and outputs defined above are assigned from the host
-		public void OnImportsSatisfied()
-		{
-			//start with an empty stream output
-			FStreamOut.SliceCount = 0;
-			Port = new ASerialPort();
-			Port.BaudRate = 9600;
-			FStreamOut.SliceCount = 1;
-			
+		void SetupDelegates() {
 			Port.DataReceived += delegate(byte[] data) {
 				// handle data
-				Stream s = new MemoryStream();
-				s.Write(data, 0, data.Length);
-				FStreamOut.Add(s);
-				s.Flush(); // ??? keine Ahnung, ob das was bringt...
+				//Logger.Log(LogType.Debug, "Received: "+data.Length.ToString());
+				sBuffer.Write(data, 0, data.Length);
 			};
 			
 			FStreamIn.Changed += delegate(IDiffSpread<Stream> input) {
@@ -68,15 +62,32 @@ namespace VVVV.Nodes
 				
 				Port.Enable = enabled[0];
 			};
+		}
+		
+		//called when all inputs and outputs defined above are assigned from the host
+		public void OnImportsSatisfied()
+		{
+			//start with an empty stream output
+			FStreamOut.SliceCount = 0;
 			
+			Port = new ASerialPort();
+			Port.BaudRate = 9600;
+			
+			Port.PortName = "COM4";
+			
+			FStreamOut.SliceCount = 1;
+			
+			SetupDelegates();
 		}
 
 		//called when data for any output pin is requested
 		public void Evaluate(int spreadMax)
 		{
-			if(FStreamOut.SliceCount > 100) {
-				FStreamOut.ResizeAndDispose(0, () => new MemoryStream());
-			}
+			FStreamOut.ResizeAndDispose(1, () => new MemoryStream());
+			Stream s = new MemoryStream();
+			sBuffer.CopyTo(s);
+			FStreamOut[0] = s;
+			sBuffer.SetLength(0);
 		}
 	}
 }
