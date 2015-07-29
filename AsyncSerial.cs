@@ -56,6 +56,7 @@ namespace Muthesius.SickLRF {
 						StartReader();
 					} catch (Exception e) {
 						string msg = e.Message;
+						SendError(e);
 					}
 				} else {
 					// Stop Reading
