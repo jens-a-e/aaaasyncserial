@@ -125,16 +125,26 @@ namespace VVVV.Nodes
 			
 			FStreamOut[0] = new MemoryStream();
 			try {
-				byte[] buffer = new  byte[sBuffer.Length];
-				int count = (int) sBuffer.Length;
-				sBuffer.Read(buffer,0,count);
-				FStreamOut[0].Write(buffer,0,count);
-				FStreamOut[0].Flush();
-				sBuffer.SetLength(0);
+				var numBytesToCopy = sBuffer.Length;
+				
+				sBuffer.Position = 0;
+				FStreamOut[0].Position = 0;
+				FStreamOut[0].SetLength(numBytesToCopy);
+				while (numBytesToCopy > 0)
+				{
+					var chunkSize = (int)Math.Min(numBytesToCopy, FBuffer.Length);
+					var numBytesRead = sBuffer.Read(FBuffer, 0, chunkSize);
+					if (numBytesRead == 0) break;
+					FStreamOut[0].Write(FBuffer, 0, numBytesRead);
+					numBytesToCopy -= numBytesRead;
+				}
+				
 			} catch (Exception e) {
 				Logger.Log(e);
+			} finally {
+				sBuffer.SetLength(0);
 			}
-			//
+			FStreamOut.Flush(true);
 		}
 	}
 }
